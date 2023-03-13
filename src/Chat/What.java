@@ -1,8 +1,10 @@
 package Chat;
-
+import Mainframe.PC;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.Stack;
+
+import static sun.rmi.registry.RegistryImpl.getID;
 
 
 public class What {
@@ -13,22 +15,26 @@ public class What {
         private Stack<String> history = new Stack<String>();
 
         public void sendUser1ToUser2(String message) {
-            enqueueMessage(user1ToUser2, message);
+            PC receiver = new PC("pc2", 5678);
+            sendMessage(receiver, message);
         }
 
         public void sendUser2ToUser1(String message) {
             enqueueMessage(user2ToUser1, message);
         }
 
+        private int segmentNumber = 1;
+
         private void enqueueMessage(Queue<String> queue, String message) {
             String[] words = message.split("\\s+");
-            int chunkSize = 10;
+            int chunkSize = 250;
             for (int i = 0; i < words.length; i += chunkSize) {
                 StringBuilder sb = new StringBuilder();
                 for (int j = i; j < Math.min(i + chunkSize, words.length); j++) {
                     sb.append(words[j]).append(" ");
                 }
-                queue.add(sb.toString().trim());
+                String segmentedMessage = String.format("%s [Segment %d]: %s", getID(), segmentNumber++, sb.toString().trim());
+                queue.add(segmentedMessage);
             }
         }
 
@@ -44,9 +50,15 @@ public class What {
             if (queue.isEmpty()) {
                 return null;
             }
-            String message = queue.remove();
-            history.push(sender + ": " + message);
-            return message;
+            StringBuilder sb = new StringBuilder();
+            while (!queue.isEmpty()) {
+                String message = queue.remove();
+                history.push(sender + ": " + message);
+                String[] parts = message.split(": ");
+                String segment = parts[1];
+                sb.append(segment).append(" ");
+            }
+            return sb.toString().trim();
         }
 
         public void printHistory() {
@@ -55,6 +67,9 @@ public class What {
                 String message = history.pop();
                 System.out.println(message);
             }
+        }
+        private void sendMessage(PC receiver, String message) {
+            // send message to receiver.getPort() using socket programming or other means
         }
     }
 

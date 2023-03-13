@@ -3,7 +3,7 @@ package Queue;
 import java.util.LinkedList;
 
 public class Queue {
-    public class Queues<T> {
+    public class MyQueues<T> {
         private LinkedList<T> list = new LinkedList<T>();
 
         public void enqueue(T item) {
@@ -21,5 +21,8 @@ public class Queue {
         public int size() {
             return list.size();
         }
+
+
     }
+
 }
