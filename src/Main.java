@@ -10,7 +10,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         ChatFunction chatBox = new ChatFunction();
-        int limit = 250;
+        int limit = 15;
 
 
         PC pc1 = new PC("pc1", 1234);
@@ -58,17 +58,20 @@ public class Main {
                 messageBuilder.append(message);
                 count += message.length();
 
+                System.out.println(" Transport Layer splitting");
                 if (count > limit) {
                     // Split message into chunks of 5 characters
                     String chunk = "";
                     int segmentnumber = 1;
                     for (int i = 0; i < messageBuilder.length(); i++) {
                         chunk += messageBuilder.charAt(i);
+
                         if ((i + 1) % limit == 0 || i == messageBuilder.length() - 1) {
                             chatBox.sendUser1ToUser2(String.format("%d:%s", segmentnumber, chunk));
-                            System.out.println(String.format("\n%s[%d] sends to %s[%d] [%d]: %s", Default.getID(), Default.getPort(), select.getID(), select.getPort(), segmentnumber, chunk.trim()));
+                            System.out.println(String.format("\n%s[Port: %d] sends to %s[Port: %d] [%d]: %s", Default.getID(), Default.getPort(), select.getID(), select.getPort(), segmentnumber, chunk.trim()));
                             chunk = "";
                             segmentnumber++;
+
                             // Wait for 1 second before checking for User 2's response
                         }
                     }
@@ -81,7 +84,7 @@ public class Main {
                 if (message != null) {
                     String historymessage = chatBox.printHistory();
                     System.out.println(historymessage);
-                    System.out.println("Merging....");
+                    System.out.println("\nMerging....");
                     try {
                         Thread.sleep(1000); // delay for 1 second (1000 milliseconds)
                     } catch (InterruptedException e) {

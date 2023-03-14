@@ -58,17 +58,22 @@ public class ChatFunction {
                 sb.insert(0, message);
             }
         } else {
-            System.out.println("Chat History:");
+            System.out.println("\nChat History:");
             while (!mergedata.isEmpty()) {
                  message = mergedata.pop();
                 sb.insert(0, message+"\n");
+                try {
+                    Thread.sleep(10); // delay for 1 second (1000 milliseconds)
+                } catch (InterruptedException e) {
+                    // handle the exception
+                }
             }
         }
         return sb.toString().trim();
     }
 
     public String printHistory() {
-        return dequeueMessage(user1ToUser2, "User 1", 1);
+        return dequeueMessage(user1ToUser2, "User 1 :", 1);
     }
 
     private void sendMessage(PC receiver, String message) {
