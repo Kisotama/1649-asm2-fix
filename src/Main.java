@@ -32,9 +32,10 @@ public class Main {
         String message;
 
         // Set the default selected PC to pc1
+
         PC select = pc1;
 
-        System.out.println("Select a PC to send the message to (default: pc1):");
+        System.out.println("Select a PC to send the message to :");
         for (int i = 0; i < pcList.size(); i++) {
             System.out.printf("%d. %s\n", i + 1, pcList.get(i).getID());
         }
@@ -44,73 +45,68 @@ public class Main {
 
             int choice = scanner.nextInt();
 
+            System.out.println("Select a PC to send the message to (default: pc1):");
+            for (int i = 0; i < pcList.size(); i++) {
+                System.out.printf("%d. %s\n", i + 1, pcList.get(i).getID());
+            }
+
             if (choice > 1 && choice <= pcList.size()) {
                 select = pcList.get(choice - 1);
-
-
-                scanner.nextLine();
-                // User 1 sends a message
-                System.out.printf("Sending message to %s: ", select.getID());
-                message = scanner.nextLine();
-                if (message.equals("exit")) {
-                    break;
-                }
-                messageBuilder.append(message);
-                count += message.length();
-
-                System.out.println(" Transport Layer splitting");
-                if (count > limit) {
-                    // Split message into chunks of 5 characters
-                    String chunk = "";
-                    int segmentnumber = 1;
-                    for (int i = 0; i < messageBuilder.length(); i++) {
-                        chunk += messageBuilder.charAt(i);
-
-                        if ((i + 1) % limit == 0 || i == messageBuilder.length() - 1) {
-                            chatBox.sendUser1ToUser2(String.format("%d:%s", segmentnumber, chunk));
-                            System.out.println(String.format("\n%s[Port: %d] sends to %s[Port: %d] [%d]: %s", Default.getID(), Default.getPort(), select.getID(), select.getPort(), segmentnumber, chunk.trim()));
-                            chunk = "";
-                            segmentnumber++;
-
-                            // Wait for 1 second before checking for User 2's response
-                        }
-                    }
-                } else {
-                    chatBox.sendUser1ToUser2(String.format("%d:%s", 1, messageBuilder.toString()));
-                    System.out.println(String.format("\n%s[%d] sends to %s[%d] [%d]: %s", Default.getID(), Default.getPort(), select.getID(), select.getPort(), 1, messageBuilder.toString()));
-                }
-
-                message = chatBox.receiveUser2();
-                if (message != null) {
-                    String historymessage = chatBox.printHistory();
-                    System.out.println(historymessage);
-                    System.out.println("\nMerging....");
-                    try {
-                        Thread.sleep(1000); // delay for 1 second (1000 milliseconds)
-                    } catch (InterruptedException e) {
-                        // handle the exception
-                    }
-                    System.out.println("\n" + select.getID() + " received: " + message + "\n");
-
-
-//                String[] segments = message.split(":");
-//                int segmentNum = Integer.parseInt(segments[0]);
-//                String segment = segments[1];
-//                if (segmentNum % 5 == 0 || segmentNum == message.length()) {
-//                    messageBuilder1.append(segment);
-//                    String receivedMessage = messageBuilder.toString();
-//                    System.out.println("\n" + select.getID() + " \nreceives from " + Default.getID() + ": " + receivedMessage.trim());
-//                    messageBuilder1 = new StringBuilder();
-                    //}
-//                else {
-//                    messageBuilder1.append(segment);
-//                }
-                    // System.out.println("\n" + select.getID() + ": " + message);
-                }
+            scanner.nextLine();
+            // User 1 sends a message
+            System.out.printf("Sending message to %s: ", select.getID());
+            message = scanner.nextLine();
+            if (message.equals("exit")) {
+                break;
             }
-            else
-                System.out.println("Please enter from 2 to 7");
+            messageBuilder.append(message);
+            count += message.length();
+
+            System.out.println(" Transport Layer splitting");
+            if (count > limit) {
+                // Split message into chunks of 5 characters
+                String chunk = "";
+                int segmentnumber = 1;
+                int chunkcount = 0;
+                for (int i = 0; i < messageBuilder.length(); i++) {
+                    chunk += messageBuilder.charAt(i);
+                    chunkcount++;
+
+                    if (chunkcount == limit || (i + 1) % limit == 0 || i == messageBuilder.length() - 1) {
+                        if (i == messageBuilder.length() - 1) {
+                            chunk += " [--End of Split]";
+                        }
+                        chatBox.sendUser1ToUser2(String.format("%d:%s", segmentnumber, chunk));
+                        System.out.println(String.format("\n%s[Port: %d] sends to %s[Port: %d] [%d] (%d characters): %s", Default.getID(), Default.getPort(), select.getID(), select.getPort(), segmentnumber, chunkcount, chunk.trim()));
+
+                        chunk = "";
+                        chunkcount = 0;
+                        segmentnumber++;
+                    }
+                }
+            } else {
+                chatBox.sendUser1ToUser2(String.format("%d:%s", 1, messageBuilder.toString()));
+                System.out.println(String.format("\n%s[%d] sends to %s[%d] [%d]: %s ", Default.getID(), Default.getPort(), select.getID(), select.getPort(), 1, messageBuilder.toString()));
+            }
+
+            message = chatBox.receiveUser2();
+            if (message != null) {
+                String historymessage = chatBox.printHistory();
+                System.out.println(historymessage);
+                System.out.println("\nMerging....");
+                try {
+                    Thread.sleep(1000); // delay for 1 second (1000 milliseconds)lhit
+                } catch (InterruptedException e) {
+                    // handle the exception
+                }
+//                    System.out.println((String.format("\n%s[%d] received: from %s[%d] [%d]: %s", select.getID(), select.getPort(), Default.getID(),Default.getPort(), message )));
+
+                System.out.println(String.format("\n%s[%d] received to %s[%d] [%d]: %s ", select.getID(), select.getPort(), Default.getID(), Default.getPort(), 1, messageBuilder.toString()));
+            }
         }
+            else
+        System.out.println("Please enter from 2 to 7");
+    }
 
 
     }
