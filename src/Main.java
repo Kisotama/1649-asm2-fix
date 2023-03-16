@@ -38,8 +38,16 @@ public class Main {
 
         //PC Default = pc1;
         int count = 0;
+        String Exit_input ="";
         StringBuilder messageBuilder = new StringBuilder();
         System.out.println("Welcome to the chat box!");
+        System.out.println("Enter exit to stop chat box");
+        Exit_input = scanner.nextLine();
+        while (!Exit_input.equalsIgnoreCase("exit")){
+            Exit_input = scanner.nextLine();
+        }
+        System.exit(0);
+
         String message;
         System.out.print("Select PC sender(from 1 to 7) :");
         int choicesender;

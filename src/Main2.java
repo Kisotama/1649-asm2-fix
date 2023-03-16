@@ -35,7 +35,9 @@ public class Main2 {
         //PC Default = pc1;
         int count = 0;
         StringBuilder messageBuilder = new StringBuilder();
+        String Exit_input = "";
         System.out.println("Welcome to the chat box!");
+
         String message;
         System.out.print("Select PC sender(from 1 to 7) :");
         //  scanner.nextLine();
@@ -44,6 +46,7 @@ public class Main2 {
         PC Default = pcList.get(choicesender - 1);
         show_menu(pcList);
         PC select;
+
         int choice;
         boolean bexit = false;
         while (!bexit) {
