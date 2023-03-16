@@ -15,11 +15,8 @@ public class Main {
     }
     public static boolean check_num(String value)
     {
-        return(value.equals("0")  || value.equals("1")  || value.equals("2")
-                || value.equals("3") || value.equals ("4") || value.equals("5") || value.equals("6") || value.equals("7")
-                ||value.equals("8") || value.equals("9") );
-
-
+        String snumberic="0,1,2,3,4,5,6,7,8,9";
+        return snumberic.indexOf(value)>0;
     }
     public static void main(String[] args) {
 
@@ -43,12 +40,16 @@ public class Main {
         int count = 0;
         StringBuilder messageBuilder = new StringBuilder();
         System.out.println("Welcome to the chat box!");
-        System.out.println("Enter 'exit' at any time to end the chat.");
         String message;
-        System.out.print("Select Sender(from 1 to 7) :");
-        int choicesender = scanner.nextInt();
-
+        System.out.print("Select PC sender(from 1 to 7) :");
+        int choicesender;
+      //  scanner.nextLine();
         String Snumber;
+        do {
+            Snumber = scanner.nextLine();
+        }
+        while (!check_num(Snumber));
+        choicesender = Integer.valueOf(Snumber);
         PC Default = pcList.get(choicesender-1);
         show_menu(pcList);
         PC select;
@@ -56,16 +57,14 @@ public class Main {
         boolean bexit=false;
         while (!bexit) {
 
-            System.out.print("Receiver (1 to 7):");
+            System.out.print("Select PC receiver (1 to 7):");
+   //         scanner.nextLine();
             Snumber = scanner.nextLine();
             if (check_num(Snumber))
-            choice = Integer.valueOf(Snumber);
+             choice = Integer.valueOf(Snumber);
             else choice = 0;
-
-
             if (choice >= 1 && choice <= pcList.size() ) {
                 select = pcList.get(choice - 1);
-
                 // User 1 sends a message
                 System.out.printf("Sending message to %s: ", select.getID());
                 messageBuilder = new StringBuilder();
