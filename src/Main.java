@@ -38,101 +38,104 @@ public class Main {
 
         //PC Default = pc1;
         int count = 0;
-        String Exit_input ="";
+        String Exit_input = "";
         StringBuilder messageBuilder = new StringBuilder();
         System.out.println("Welcome to the chat box!");
         System.out.println("Enter exit to stop chat box");
         Exit_input = scanner.nextLine();
-        while (!Exit_input.equalsIgnoreCase("exit")){
-            Exit_input = scanner.nextLine();
-        }
-        System.exit(0);
+        if (!Exit_input.equalsIgnoreCase("exit")){
 
-        String message;
-        System.out.print("Select PC sender(from 1 to 7) :");
-        int choicesender;
-        //  scanner.nextLine();
-        String Snumber;
-        do {
-            Snumber = scanner.nextLine();
-        }
-        while (!check_num(Snumber));
-        choicesender = Integer.valueOf(Snumber);
-        PC Default = pcList.get(choicesender - 1);
-        show_menu(pcList);
-        PC select;
-        int choice;
-        boolean bexit = false;
-        while (!bexit) {
 
-            System.out.print("Select PC receiver (1 to 7):");
-            //         scanner.nextLine();
-            Snumber = scanner.nextLine();
-            if (check_num(Snumber))
-                choice = Integer.valueOf(Snumber);
-            else choice = 0;
-            if (choice >= 1 && choice <= pcList.size()) {
-                select = pcList.get(choice - 1);
-                // User 1 sends a message
-                System.out.printf("Sending message to %s: ", select.getID());
-                messageBuilder = new StringBuilder();
-                message = scanner.nextLine().trim();
-                messageBuilder.append(message);
-                if (!(message.equals(null) || message.equals(""))) {
-                    count += message.length();
-                    //Splitting function
-                    System.out.println(" Transport Layer splitting");
-                    if (count > limit) {
-                        // Split message into chunks of 5 characters
-                        String chunk = "";
-                        int segmentnumber = 1;
-                        int chunkcount = 0;
-                        for (int i = 0; i < messageBuilder.length(); i++) {
-                            chunk += messageBuilder.charAt(i);
-                            chunkcount++;
 
-                            if (chunkcount == limit || (i + 1) % limit == 0 || i == messageBuilder.length() - 1) {
-                                if (i == messageBuilder.length() - 1) {
-                                    chunk += " [--End of Split]";
+
+            String message;
+            System.out.print("Select PC sender(from 1 to 7) :");
+            int choicesender;
+            //  scanner.nextLine();
+            String Snumber;
+            do {
+                Snumber = scanner.nextLine();
+            }
+            while (!check_num(Snumber));
+            choicesender = Integer.valueOf(Snumber);
+            PC Default = pcList.get(choicesender - 1);
+            show_menu(pcList);
+            PC select;
+            int choice;
+            boolean bexit = false;
+            while (!bexit) {
+
+                System.out.print("Select PC receiver (1 to 7):");
+                //         scanner.nextLine();
+                Snumber = scanner.nextLine();
+                if (check_num(Snumber))
+                    choice = Integer.valueOf(Snumber);
+                else choice = 0;
+                if (choice >= 1 && choice <= pcList.size()) {
+                    select = pcList.get(choice - 1);
+                    // User 1 sends a message
+                    System.out.printf("Sending message to %s: ", select.getID());
+                    messageBuilder = new StringBuilder();
+                    message = scanner.nextLine().trim();
+                    messageBuilder.append(message);
+                    if (!(message.equals(null) || message.equals(""))) {
+                        count += message.length();
+                        //Splitting function
+                        System.out.println(" Transport Layer splitting");
+                        if (count > limit) {
+                            // Split message into chunks of 5 characters
+                            String chunk = "";
+                            int segmentnumber = 1;
+                            int chunkcount = 0;
+                            for (int i = 0; i < messageBuilder.length(); i++) {
+                                chunk += messageBuilder.charAt(i);
+                                chunkcount++;
+
+                                if (chunkcount == limit || (i + 1) % limit == 0 || i == messageBuilder.length() - 1) {
+                                    if (i == messageBuilder.length() - 1) {
+                                        chunk += " [--End of Split]";
+                                    }
+                                    chatBox.sendUser1ToUser2(String.format("%d:%s", segmentnumber, chunk));
+                                    System.out.println(String.format("\n%s[Port: %d] sends to %s[Port: %d] [%d] : %s [%d characters]", Default.getID(), Default.getPort(), select.getID(), select.getPort(),
+                                            segmentnumber, chunk.trim(), chunkcount));
+                                    chunk = "";
+                                    chunkcount = 0;
+                                    segmentnumber++;
                                 }
-                                chatBox.sendUser1ToUser2(String.format("%d:%s", segmentnumber, chunk));
-                                System.out.println(String.format("\n%s[Port: %d] sends to %s[Port: %d] [%d] : %s [%d characters]", Default.getID(), Default.getPort(), select.getID(), select.getPort(),
-                                        segmentnumber, chunk.trim(), chunkcount));
-                                chunk = "";
-                                chunkcount = 0;
-                                segmentnumber++;
                             }
+                        } else if (count > 0) {
+                            chatBox.sendUser1ToUser2(String.format("%d:%s", 1, messageBuilder.toString()));
+                            System.out.println(String.format("\n%s[%d] sends to %s[%d] [%d]: %s", Default.getID(), Default.getPort(), select.getID(), select.getPort(), 1, messageBuilder.toString()));
                         }
-                    } else if (count > 0) {
-                        chatBox.sendUser1ToUser2(String.format("%d:%s", 1, messageBuilder.toString()));
-                        System.out.println(String.format("\n%s[%d] sends to %s[%d] [%d]: %s", Default.getID(), Default.getPort(), select.getID(), select.getPort(), 1, messageBuilder.toString()));
-                    }
 
-                    message = chatBox.receiveUser2(select);
-                    if (message != null) {
-                        String historymessage = chatBox.printHistory(Default);
-                        System.out.println(historymessage);
-                        System.out.println("\nMerging....");
-                        try {
-                            Thread.sleep(1000); // delay for 1 second (1000 milliseconds)
-                        } catch (InterruptedException e) {
-                            // handle the exception
+                        message = chatBox.receiveUser2(select);
+                        if (message != null) {
+                            String historymessage = chatBox.printHistory(Default);
+                            System.out.println(historymessage);
+                            System.out.println("\nMerging....");
+                            try {
+                                Thread.sleep(1000); // delay for 1 second (1000 milliseconds)
+                            } catch (InterruptedException e) {
+                                // handle the exception
+                            }
+                            System.out.println(String.format("\n%s[%d] received from %s[%d] [%d]: %s ", select.getID(), select.getPort(), Default.getID(), Default.getPort(), 1, messageBuilder.toString()));
                         }
-                        System.out.println(String.format("\n%s[%d] received from %s[%d] [%d]: %s ", select.getID(), select.getPort(), Default.getID(), Default.getPort(), 1, messageBuilder.toString()));
-                    }
 
-                    System.out.print("Do you want to continue?(Y/N)");
-                    String askmessage;
-                    do {
-                        askmessage = scanner.nextLine().toUpperCase();
-                    } while (!askmessage.equals("N") && !askmessage.equals("Y"));
-                    bexit = askmessage.equals("N");
+                        System.out.print("Do you want to continue?(Y/N)");
+                        String askmessage;
+                        do {
+                            askmessage = scanner.nextLine().toUpperCase();
+                        } while (!askmessage.equals("N") && !askmessage.equals("Y"));
+                        bexit = askmessage.equals("N");
 
-                } else System.out.println("Message can not be null!");
-            } else
-                System.out.println("Please enter from 1 to 7");
+                    } else System.out.println("Message can not be null!");
+                } else
+                    System.out.println("Please enter from 1 to 7");
+            }
+
+
+        }else {
+            System.exit(0);
         }
-
-
     }
 }
