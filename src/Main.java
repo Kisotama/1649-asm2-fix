@@ -6,23 +6,24 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void show_menu(List<PC> pcList )
-    {
+
+    public static void show_menu(List<PC> pcList) {
         System.out.println("Select a PC to send the message to:");
         for (int i = 0; i < pcList.size(); i++) {
             System.out.printf("%d. %s\n", i + 1, pcList.get(i).getID());
         }
     }
-    public static boolean check_num(String value)
-    {
-        String snumberic="0,1,2,3,4,5,6,7,8,9";
-        return snumberic.indexOf(value)>0;
+
+    public static boolean check_num(String value) {
+        String snumberic = "0123456789";
+        return snumberic.indexOf(value) > 0;
     }
+
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
         ChatFunction chatBox = new ChatFunction();
-        int limit = 15;
+        int limit = 250;
 
 
         PC pc1 = new PC("pc1", 1234);
@@ -35,7 +36,6 @@ public class Main {
 
         List<PC> pcList = Arrays.asList(pc1, pc2, pc3, pc4, pc5, pc6, pc7);
 
-
         //PC Default = pc1;
         int count = 0;
         StringBuilder messageBuilder = new StringBuilder();
@@ -43,27 +43,27 @@ public class Main {
         String message;
         System.out.print("Select PC sender(from 1 to 7) :");
         int choicesender;
-      //  scanner.nextLine();
+        //  scanner.nextLine();
         String Snumber;
         do {
             Snumber = scanner.nextLine();
         }
         while (!check_num(Snumber));
         choicesender = Integer.valueOf(Snumber);
-        PC Default = pcList.get(choicesender-1);
+        PC Default = pcList.get(choicesender - 1);
         show_menu(pcList);
         PC select;
         int choice;
-        boolean bexit=false;
+        boolean bexit = false;
         while (!bexit) {
 
             System.out.print("Select PC receiver (1 to 7):");
-   //         scanner.nextLine();
+            //         scanner.nextLine();
             Snumber = scanner.nextLine();
             if (check_num(Snumber))
-             choice = Integer.valueOf(Snumber);
+                choice = Integer.valueOf(Snumber);
             else choice = 0;
-            if (choice >= 1 && choice <= pcList.size() ) {
+            if (choice >= 1 && choice <= pcList.size()) {
                 select = pcList.get(choice - 1);
                 // User 1 sends a message
                 System.out.printf("Sending message to %s: ", select.getID());
@@ -95,7 +95,7 @@ public class Main {
                                 segmentnumber++;
                             }
                         }
-                    } else {
+                    } else if (count > 0) {
                         chatBox.sendUser1ToUser2(String.format("%d:%s", 1, messageBuilder.toString()));
                         System.out.println(String.format("\n%s[%d] sends to %s[%d] [%d]: %s", Default.getID(), Default.getPort(), select.getID(), select.getPort(), 1, messageBuilder.toString()));
                     }
@@ -119,9 +119,10 @@ public class Main {
                         askmessage = scanner.nextLine().toUpperCase();
                     } while (!askmessage.equals("N") && !askmessage.equals("Y"));
                     bexit = askmessage.equals("N");
-                } else
-                    System.out.println("Please enter from 1 to 7");
-            }
+
+                } else System.out.println("Message can not be null!");
+            } else
+                System.out.println("Please enter from 1 to 7");
         }
 
 
